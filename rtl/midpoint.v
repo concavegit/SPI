@@ -4,9 +4,11 @@
 module midpoint
   (
    input        clk,
-                button0,
-                switch0,
-                switch1,
+                btn0,
+                btn1,
+                btn2,
+                sw0,
+                sw1,
 
    output [3:0] parallelDataOut
    );
@@ -20,27 +22,27 @@ module midpoint
       .parallelLoad(parallelLoad),
       .parallelDataIn(8'hA5),
       .serialDataIn(serialDataIn),
-      .parallelDataOut(parallelDataOut)
+      .parallelDataOut({parallelDataOut, parallelDataOut})
       );
 
-   inputconditioner button0inputcond
+   inputconditioner #(.counterwidth(26), .waittime(50000000)) btn0inputcond
      (
       .clk(clk),
-      .noisysignal(button0),
+      .noisysignal(btn0),
       .negativeedge(parallelLoad)
       );
 
-   inputconditioner switch0inputcond
+   inputconditioner #(.counterwidth(26), .waittime(50000000)) sw0inputcond
      (
       .clk(clk),
-      .noisysignal(switch0),
+      .noisysignal(sw0),
       .conditioned(serialDataIn)
       );
 
-   inputconditioner switch1inputcond
+   inputconditioner #(.counterwidth(26), .waittime(50000000)) sw1inputcond
      (
       .clk(clk),
-      .noisysignal(switch1),
+      .noisysignal(sw1),
       .positiveedge(peripheralClkEdge)
       );
 

@@ -34,4 +34,4 @@ module inputconditioner
       synchronizer0 <= noisysignal;
       synchronizer1 <= synchronizer0;
    end
-endmodule 
+endmodule
