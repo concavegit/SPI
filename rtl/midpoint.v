@@ -7,8 +7,8 @@ module midpoint
                 button0,
                 switch0,
                 switch1,
-                [7:0] parallelDataIn,
-   output [7:0] parallelDataOut
+
+   output [3:0] parallelDataOut
    );
 
    wire         peripheralClkEdge, parallelLoad, serialDataIn;
@@ -18,7 +18,7 @@ module midpoint
       .clk(clk),
       .peripheralClkEdge(peripheralClkEdge),
       .parallelLoad(parallelLoad),
-      .parallelDataIn(parallelDataIn),
+      .parallelDataIn(8'hA5),
       .serialDataIn(serialDataIn),
       .parallelDataOut(parallelDataOut)
       );
