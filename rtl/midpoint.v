@@ -17,8 +17,9 @@ module midpoint
      (
       .clk(clk),
       .peripheralClkEdge(peripheralClkEdge),
-      .serialDataIn(serialDataIn),
+      .parallelLoad(parallelLoad),
       .parallelDataIn(parallelDataIn),
+      .serialDataIn(serialDataIn),
       .parallelDataOut(parallelDataOut)
       );
 
