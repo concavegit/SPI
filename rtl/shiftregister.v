@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------
+// Shift Register
+//   Parameterized width (in bits)
+//   Shift register can operate in two modes:
+//      - serial in, parallel out
+//      - parallel in, serial out
+//------------------------------------------------------------------------
+
 module shiftregister
   #(parameter width=8)
    (

@@ -1,3 +1,10 @@
+//------------------------------------------------------------------------
+// Input Conditioner
+//    1) Synchronizes input to clock domain
+//    2) Debounces input
+//    3) Creates pulses at edge transitions
+//------------------------------------------------------------------------
+
 module inputconditioner
   (
    input      clk,
