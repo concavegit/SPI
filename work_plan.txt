@@ -1,0 +1,6 @@
+input conditioning: 1.5 hours by 10/9 including test bench
+shift register: 1.5 hours by 10/9 including test bench
+midpoint demo: 1.5 hours by 10/10
+finite state machine: 3 hours by 10/11
+spi memory test: 4 hours by 10/16
+write-up: 2 hours by 10/18
