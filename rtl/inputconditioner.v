@@ -22,11 +22,6 @@ module inputconditioner
    reg                      synchronizer1 = 0;
 
    always @(posedge clk) begin
-     if (conditioned !== 0 && conditioned !== 1) begin
-         conditioned <= 0;
-         positiveedge <= 0;
-         negativeedge <= 0;
-       end
       if (conditioned == synchronizer1) counter <= 0;
       else begin
          if (counter == waittime) begin
