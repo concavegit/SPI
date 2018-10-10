@@ -25,3 +25,7 @@ In order to test our input conditioner, we mainly relied on the Gtkwave Analyzer
 
 ## Shift Register
 ![Waveforms]()
+
+The shift register tests by loading 1s into the shift register memory and checking that the loading of 1s from the LSB has successfully occurs.
+Then we check that 0 can be loaded into the shift register memory in a similar way, asserting the values of parallelDataOut as we shift 0s into the memory until the memory is just 0.
+The initial set to 0 tests the use of parallelDataLoad, as if this step failed the above two steps will have also failed as they assume 0 has been loaded into the memory.
