@@ -98,7 +98,7 @@ module fsm
 
            // Write to datamemory for 8 bits.
            5: begin
-              if (counter == 8) begin
+              if (counter == 7) begin
                  dm_we <= 0;
                  state <= 0;
                  counter <= 0;
