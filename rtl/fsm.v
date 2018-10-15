@@ -10,7 +10,7 @@
  * The states which control these outputs are:
  * - 0: Begin the transaction by allowing the address of the data
  *     memory to be selected and proceed to state 1.
- * - 1: Load the first 7 bits of data into the adress and then proceed
+ * - 1: Load the first 7 bits of data into the address and then proceed
  *   to state 2.
  * - 2: Branch for the value of RW.
  * - 3: Read: Enable the miso_pin and close parallel load (sr) of the
@@ -19,27 +19,34 @@
  * - 5: Write MOSI to the selected address and then revert to state 0.
  */
 
+`define BEGIN 3'd0
+`define LOAD_ADDRESS 3'd1
+`define HANDLE_READ_WRITE 3'd2
+`define START_READ 3'd3
+`define END_READ 3'd4
+`define WRITE 3'd5
+
 module fsm
   (
-   input      sclk_edge,
-              cs,
-              rw,
+   input      sclk_edge, // Positive edge of the serial clock
+              cs, // Chip Select
+              rw, // Bit determining whether a read or write operation is occurring
    output reg miso_buff,
-   dm_we,
-   addr_we,
-   sr_we
+   dm_we, // Date Memory Write Enable
+   addr_we, // Address Write enable
+   sr_we    // Shift Register Write Enable
    );
 
    // Keep track of the amount of bits of data loaded.
    reg [3:0]  counter = 0;
 
    // Keep track of the current state.
-   reg [2:0]  state = 0;
+   reg [2:0]  state = `BEGIN;
 
    always @(posedge sclk_edge) begin
       // If cs is high, do nothing.
       if (cs) begin
-         state <= 0;
+         state <= `BEGIN;
          miso_buff <= 0;
          dm_we <= 0;
          addr_we <= 0;
@@ -50,44 +57,45 @@ module fsm
          case (state)
 
            // Begin the transaction
-           0: begin
+           `BEGIN: begin
               addr_we <= 1;
-              state <= 1;
+              state <= `LOAD_ADDRESS;
            end
 
            // Load the first 7 bits of data for the address.
-           1: begin
+           `LOAD_ADDRESS: begin
               counter <= counter + 1;
               if (counter == 6) begin
-                 state <= 2;
+                 state <= `HANDLE_READ_WRITE;
                  counter <= 0;
                  addr_we <= 0;
               end
            end
 
            // Handle RW
-           2: begin
+           `HANDLE_READ_WRITE: begin
+              // Read when rw high, write when rw low
               if (rw) begin
                  sr_we <= 1;
-                 state <= 3;
+                 state <= `START_READ;
               end
               else begin
                  dm_we <= 1;
-                 state <= 5;
+                 state <= `WRITE;
               end
            end
 
            // Read operation:
-           3: begin
+           `START_READ: begin
               sr_we <= 0;
               miso_buff <= 1;
-              state <= 4;
+              state <= `END_READ;
            end
 
            // Stop writing to miso
-           4: begin
+           `END_READ: begin
               if (counter == 7) begin
-                 state <= 0;
+                 state <= `BEGIN;
                  counter <= 0;
                  miso_buff <= 0;
               end
@@ -97,10 +105,10 @@ module fsm
            end
 
            // Write to datamemory for 8 bits.
-           5: begin
+           `WRITE: begin
               if (counter == 7) begin
                  dm_we <= 0;
-                 state <= 0;
+                 state <= `BEGIN;
                  counter <= 0;
               end
               else begin
