@@ -21,20 +21,20 @@
 
 module fsm
   (
-   input  sclk_edge,
-          cs,
-          rw,
-   output miso_buff,
+   input      sclk_edge,
+              cs,
+              rw,
+   output reg miso_buff,
    dm_we,
    addr_we,
    sr_we
    );
 
    // Keep track of the amount of bits of data loaded.
-   reg [3:0] counter = 0;
+   reg [3:0]  counter = 0;
 
    // Keep track of the current state.
-   reg [2:0] state = 0;
+   reg [2:0]  state = 0;
 
    always @(posedge sclk_edge) begin
       // If cs is high, do nothing.
