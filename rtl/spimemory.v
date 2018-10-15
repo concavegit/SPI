@@ -39,18 +39,18 @@ module spiMemory
       .conditioned(cs)
       );
 
-   wire [7:0]   shift_reg_parallel_out, dout;
-   wire         sr_we, d;
+   wire [7:0]   shift_reg_parallel_out, datamemout;
+   wire         sr_we, serial_out;
 
    shiftregister sr
      (
       .clk(clk),
       .peripheralClkEdge(sclk_posedge),
       .parallelLoad(sr_we),
-      .parallelDataIn(dout),
+      .parallelDataIn(datamemout),
       .serialDataIn(serial_in),
       .parallelDataOut(shift_reg_parallel_out),
-      .serialDataOut(d)
+      .serialDataOut(serial_out)
       );
 
    wire [6:0]   address;
@@ -59,7 +59,7 @@ module spiMemory
    datamemory dm
      (
       .clk(clk),
-      .dataOut(dout),
+      .dataOut(datamemout),
       .address(address),
       .writeEnable(dm_we),
       .dataIn(shift_reg_parallel_out)
@@ -67,7 +67,7 @@ module spiMemory
 
    wire         addr_we;
 
-   dff al
+   addressLatch al
      (
       .d(shift_reg_parallel_out[6:0]),
       .clk(clk),
@@ -88,5 +88,15 @@ module spiMemory
       .sr_we(sr_we)
       );
 
-   bufif1 b(miso_pin, d, miso_buff);
+  wire serial_out_delayed;
+
+  dff miso_dff
+    (
+      .d(serial_out),
+      .clk(clk),
+      .ce(sclk_negedge),
+      .q(serial_out_delayed)
+      );
+
+   bufif1 b(miso_pin, serial_out_delayed, miso_buff);
 endmodule
