@@ -21,9 +21,16 @@ module testfsm();
    initial begin
       $dumpfile("fsm.vcd");
       $dumpvars();
+      // Write 8'b11111111 to 7'b0000000.
       #2 cs = 0;
       shift_reg_out_p = 0;
       #18 shift_reg_out_p = 1;
-      #16 $finish;
+      #16 cs = 1;
+
+      // Read address 7'b0000000
+      #16 cs = 0;
+      shift_reg_out_p = 0;
+      #14 shift_reg_out_p = 1;
+      #32 $finish;
    end
 endmodule
