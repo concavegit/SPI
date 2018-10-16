@@ -2,92 +2,92 @@
 
 module spimemorytestbenchharness();
 
-  wire clk;
-  wire sclk_pin;
-  wire cs_pin;
-  wire mosi_pin;
-  wire[3:0] leds;
-  wire miso_pin;
+   wire clk;
+   wire sclk_pin;
+   wire cs_pin;
+   wire mosi_pin;
+   wire [3:0] leds;
+   wire       miso_pin;
 
-  reg begintest; // Set High to begin testing memory file
-  wire endtest; // Set High to signal test completion
-  wire dutpassed; // Indicates whether memory file passed tests
+   reg        begintest; // Set High to begin testing memory file
+   wire       endtest; // Set High to signal test completion
+   wire       dutpassed; // Indicates whether memory file passed tests
 
-  // Instantiate the memory file being tested
-  spiMemory DUT
-  (
-    .clk(clk),
-    .sclk_pin(sclk_pin),
-    .cs_pin(cs_pin),
-    .mosi_pin(mosi_pin),
-    .miso_pin(miso_pin),
-    .leds(leds)
-    );
+   // Instantiate the memory file being tested
+   spiMemory DUT
+     (
+      .clk(clk),
+      .sclk_pin(sclk_pin),
+      .cs_pin(cs_pin),
+      .mosi_pin(mosi_pin),
+      .miso_pin(miso_pin),
+      .leds(leds)
+      );
 
-  // Instantiate test bench to test the DUT
-  spimemorytestbench tester
-  (
-    .begintest(begintest),
-    .endtest(endtest),
-    .dutpassed(dutpassed),
-    .clk(clk),
-    .sclk_pin(sclk_pin),
-    .cs_pin(cs_pin),
-    .mosi_pin(mosi_pin),
-    .miso_pin(miso_pin),
-    .leds(leds)
-    );
+   // Instantiate test bench to test the DUT
+   spimemorytestbench tester
+     (
+      .begintest(begintest),
+      .endtest(endtest),
+      .dutpassed(dutpassed),
+      .clk(clk),
+      .sclk_pin(sclk_pin),
+      .cs_pin(cs_pin),
+      .mosi_pin(mosi_pin),
+      .miso_pin(miso_pin),
+      .leds(leds)
+      );
 
-    initial begin
+   initial begin
       begintest=0;
       #10;
       begintest=1;
-      #1000;
-    end
+      #10000 $finish;
+   end
 
-    always @(posedge endtest) begin
+   always @(posedge endtest) begin
       $display("DUT passed?: %b", dutpassed);
-    end
+   end
 
-  endmodule
+endmodule
 
 
 module spimemorytestbench
-(
-  // Test bench driver signal connections
-  input	   		begintest,	// Triggers start of testing
-  output reg 		endtest,	// Raise once test completes
-  output reg 		dutpassed,	// Signal test result
+  (
+   // Test bench driver signal connections
+   input       begintest, // Triggers start of testing
+   output reg  endtest, // Raise once test completes
+   output reg  dutpassed, // Signal test result
 
-  input miso_pin,
-  input[3:0] leds,
-  output reg sclk_pin,
-  output reg cs_pin,
-  output reg mosi_pin,
-  output reg clk
-  );
+   input       miso_pin,
+   input [3:0] leds,
+   output reg  sclk_pin,
+   output reg  cs_pin,
+   output reg  mosi_pin,
+   output reg  clk
+   );
 
 
-    initial begin
+   initial begin
       cs_pin = 1;
       sclk_pin = 0;
       mosi_pin = 0;
       clk = 0;
-    end
+   end
 
-    always #10 clk = !clk; // 50MHz Clock
-    always #40 sclk_pin = !sclk_pin; // Serial clock on 80 nanosecond cycles
+   always #10 clk = !clk; // 50MHz Clock
+   always #40 sclk_pin = !sclk_pin; // Serial clock on 80 nanosecond cycles
 
 
-    task reset_pins; begin
+   task reset_pins; begin
       cs_pin = 1;
       sclk_pin = 0;
       mosi_pin = 0;
       #5 clk=1; #5 clk=0; #5 clk=1; #5 clk=0;
-      end
-    endtask
+   end
+   endtask
 
-    always @(posedge begintest) begin
+   always @(posedge begintest) begin
       endtest = 0;
       dutpassed = 1;
       #10;
@@ -121,8 +121,8 @@ module spimemorytestbench
       #80 mosi_pin <= 0;
 
       #80
-      // Read from register 7'b0011101
-      mosi_pin <= 0;
+        // Read from register 7'b0011101
+        mosi_pin <= 0;
       #80 mosi_pin <= 0;
       #80 mosi_pin <= 1;
       #80 mosi_pin <= 1;
@@ -134,40 +134,40 @@ module spimemorytestbench
       // With 50 MHz clock, should take 160 nanoseconds total to read from serial
 
       #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
-        dutpassed = 0;
-        $display("Test 1 Failed");
+         dutpassed = 0;
+         $display("Test 1 Failed");
       end
       #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
-        dutpassed = 0;
-        $display("Test 1 Failed");
+         dutpassed = 0;
+         $display("Test 1 Failed");
       end
       #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
-        dutpassed = 0;
-        $display("Test 1 Failed");
+         dutpassed = 0;
+         $display("Test 1 Failed");
       end
       #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
-        dutpassed = 0;
-        $display("Test 1 Failed");
+         dutpassed = 0;
+         $display("Test 1 Failed");
       end
       #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
-        dutpassed = 0;
-        $display("Test 1 Failed");
+         dutpassed = 0;
+         $display("Test 1 Failed");
       end
       #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
-        dutpassed = 0;
-        $display("Test 1 Failed");
+         dutpassed = 0;
+         $display("Test 1 Failed");
       end
       #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
-        dutpassed = 0;
-        $display("Test 1 Failed");
+         dutpassed = 0;
+         $display("Test 1 Failed");
       end
       #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
-        dutpassed = 0;
-        $display("Test 1 Failed");
+         dutpassed = 0;
+         $display("Test 1 Failed");
       end
 
       #5
-      endtest = 1;
-    end
+        endtest = 1;
+   end
 
 endmodule
