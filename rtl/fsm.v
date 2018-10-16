@@ -30,7 +30,7 @@ module fsm
   (
    input      sclk_edge, // Positive edge of the serial clock
               cs, // Chip Select
-              rw, // Bit determining whether a read or write operation is occurring
+              rw, // Bit determining whether a read or write operation is occurring, equivalent to ShiftRegOutP[0]
    output reg miso_buff,
    dm_we, // Date Memory Write Enable
    addr_we, // Address Write enable
@@ -65,6 +65,7 @@ module fsm
            // Load the first 7 bits of data for the address.
            `LOAD_ADDRESS: begin
               counter <= counter + 1;
+              // 6 because counting starts at 0
               if (counter == 6) begin
                  state <= `HANDLE_READ_WRITE;
                  counter <= 0;
