@@ -67,7 +67,6 @@ module spimemorytestbench
   output reg clk
   );
 
-    integer data_length;
 
     initial begin
       cs_pin = 1;
@@ -134,8 +133,37 @@ module spimemorytestbench
 
       // With 50 MHz clock, should take 160 nanoseconds total to read from serial
 
-      for (data_length = 0; data_length < 8; data_length = data_length + 1) begin
-        #20; // Cycle through and check the bits from the miso pin
+      #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
+        dutpassed = 0;
+        $display("Test 1 Failed");
+      end
+      #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
+        dutpassed = 0;
+        $display("Test 1 Failed");
+      end
+      #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
+        dutpassed = 0;
+        $display("Test 1 Failed");
+      end
+      #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
+        dutpassed = 0;
+        $display("Test 1 Failed");
+      end
+      #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
+        dutpassed = 0;
+        $display("Test 1 Failed");
+      end
+      #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
+        dutpassed = 0;
+        $display("Test 1 Failed");
+      end
+      #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
+        dutpassed = 0;
+        $display("Test 1 Failed");
+      end
+      #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
+        dutpassed = 0;
+        $display("Test 1 Failed");
       end
 
       #5
