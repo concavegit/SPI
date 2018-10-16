@@ -11,7 +11,7 @@ module spitest();
    integer    i;
 
    initial clk=0;
-   always #10 clk= !clk;
+   always #1 clk= ~clk;
 
 
    spiMemory dut(clk, sclk_pin, cs_pin, miso_pin, mosi_pin, leds[3:0]);
@@ -22,8 +22,8 @@ module spitest();
       cs_pin = 1;
       mosi_pin = 0;
       sclk_pin = 0;
-      #1000 sclk_pin = 1;
-      #1000 cs_pin = 0;#1000;
+      #100 sclk_pin = 1;
+      #100 cs_pin = 0;#100;
 
       // Write 0xFF to address 0x00;
 
@@ -31,14 +31,14 @@ module spitest();
          if (i < 8) mosi_pin = 0;
          else mosi_pin = 1;
          sclk_pin = 0;
-         #1000 sclk_pin = 1; #1000;
+         #100 sclk_pin = 1; #100;
       end
 
       // Lie dormant for a bit
       cs_pin = 1;
       sclk_pin = 0;
-      #1000 sclk_pin = 1;
-      #1000 cs_pin = 0;#1000;
+      #100 sclk_pin = 1;
+      #100 cs_pin = 0;#100;
 
 
       // Read 0xFF
@@ -46,20 +46,20 @@ module spitest();
          if (i < 7 ) mosi_pin = 0;
          else mosi_pin = 1;
          sclk_pin = 0;
-         #1000 sclk_pin = 1; #1000;
+         #100 sclk_pin = 1; #100;
       end
 
       // sr lag
       sclk_pin = 0;
-      #1000 sclk_pin = 1; #1000;
+      #100 sclk_pin = 1; #100;
 
       // Check the output of MISO
       $display("Reading data at address 0");
       for (i = 0; i < 8; i = i + 1) begin
          sclk_pin = 0;
-         #1000 sclk_pin = 1; #1000;
+         #100 sclk_pin = 1; #100;
          $display("%b", miso_pin);
       end
-      #1000 $finish;
+      #100 $finish;
    end
 endmodule
