@@ -112,9 +112,8 @@ module fsm
                  state <= `BEGIN;
                  counter <= 0;
               end
-              else begin
+              else
                  counter <= counter + 1;
-              end
            end
          endcase
       end
