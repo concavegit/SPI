@@ -1,0 +1,13 @@
+@startuml
+[*] -> Begin : CS asserted low
+Begin -> LoadAddress
+LoadAddress -> LoadAddress : Read 7 bits
+LoadAddress --> HandleReadWrite
+HandleReadWrite --> StartRead : Read?
+StartRead -> EndRead
+HandleReadWrite -> Write : Write?
+Write -> Write : Write 8 bits
+EndRead --> Begin
+EndRead -> EndRead : Read 8 bits
+Write --> Begin
+@enduml

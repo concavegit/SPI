@@ -39,3 +39,24 @@ The 1 should not shift.
 - Reset: Successfully writes xA5.
 - Load 1 into LSB: Successful.
 - Double Toggle: Successfully does not shift.
+
+# SPI Implementation
+We used the schematic below available in the lab prompt.
+
+![](res/schema.png)
+
+The finite state machine we used is outlined by the below diagram.
+If CS is high at any point, all enables are low and returned to the initial point.
+
+![](res/fsm.png)
+
+This design shows the steps necessary for the behavior of an SPI memory unit: CS is asserted low, a 7 bit address is loaded, the RW bit is received, and 8 bits of data is either read or written.
+Since there are enables for the data memory write (dm_we), the address write (addr_we), the shiftregister parallel in (sr_we), and the buffer write (miso_buff), it made sense to us to have each state be some combination of these enables.
+To begin receiving an address, we must first enable addr_we (the `Begin` state), with everything else set low.
+To receive an address from here, simply wait 7 serial clock cycles to load the data into the address (the `LoadAddress` state).
+Once this happens, the state machine transitions to a state which handles reading and writing (the `ReadWrite` state).
+If the 8th bit is high (read operation), we load the shiftregister with the contents of the datamemory and begin reading by setting sr_we high (the `StartRead` state).
+To continue the read operation, we enable miso_buff for 8 serial clock cycles (`EndRead` state) and then return to the beginning state.
+To write, we enable dm_we for 8 serial clock cycles and then return to the beginning state.
+
+# SPI Test Strategy
