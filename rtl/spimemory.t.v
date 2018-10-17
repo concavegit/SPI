@@ -1,173 +1,65 @@
 `include "spimemory.v"
 
-module spimemorytestbenchharness();
-
-   wire clk;
-   wire sclk_pin;
-   wire cs_pin;
-   wire mosi_pin;
+module spitest();
+   reg clk;
+   reg sclk_pin;
+   reg cs_pin;
+   wire miso_pin;
+   reg  mosi_pin;
    wire [3:0] leds;
-   wire       miso_pin;
 
-   reg        begintest; // Set High to begin testing memory file
-   wire       endtest; // Set High to signal test completion
-   wire       dutpassed; // Indicates whether memory file passed tests
+   integer    i;
 
-   // Instantiate the memory file being tested
-   spiMemory DUT
-     (
-      .clk(clk),
-      .sclk_pin(sclk_pin),
-      .cs_pin(cs_pin),
-      .mosi_pin(mosi_pin),
-      .miso_pin(miso_pin),
-      .leds(leds)
-      );
+   initial clk=0;
+   always #1 clk= ~clk;
 
-   // Instantiate test bench to test the DUT
-   spimemorytestbench tester
-     (
-      .begintest(begintest),
-      .endtest(endtest),
-      .dutpassed(dutpassed),
-      .clk(clk),
-      .sclk_pin(sclk_pin),
-      .cs_pin(cs_pin),
-      .mosi_pin(mosi_pin),
-      .miso_pin(miso_pin),
-      .leds(leds)
-      );
 
+   spiMemory dut(clk, sclk_pin, cs_pin, miso_pin, mosi_pin, leds[3:0]);
    initial begin
-      begintest=0;
-      #10;
-      begintest=1;
-      #10000 $finish;
-   end
+      $dumpfile("spimemory.vcd");
+      $dumpvars();
 
-   always @(posedge endtest) begin
-      $display("DUT passed?: %b", dutpassed);
-   end
+      cs_pin = 1;
+      mosi_pin = 0;
+      sclk_pin = 0;
+      #100 sclk_pin = 1;
+      #100 cs_pin = 0;#100;
 
-endmodule
+      // Write 0xFF to address 0x00;
 
+      for (i = 0; i < 16; i = i + 1) begin
+         if (i < 8) mosi_pin = 0;
+         else mosi_pin = 1;
+         sclk_pin = 0;
+         #100 sclk_pin = 1; #100;
+      end
 
-module spimemorytestbench
-  (
-   // Test bench driver signal connections
-   input       begintest, // Triggers start of testing
-   output reg  endtest, // Raise once test completes
-   output reg  dutpassed, // Signal test result
-
-   input       miso_pin,
-   input [3:0] leds,
-   output reg  sclk_pin,
-   output reg  cs_pin,
-   output reg  mosi_pin,
-   output reg  clk
-   );
-
-
-   initial begin
+      // Lie dormant for a bit
       cs_pin = 1;
       sclk_pin = 0;
-      mosi_pin = 0;
-      clk = 0;
-   end
-
-   always #10 clk = !clk; // 50MHz Clock
-   always #40 sclk_pin = !sclk_pin; // Serial clock on 80 nanosecond cycles
+      #100 sclk_pin = 1;
+      #100 cs_pin = 0;#100;
 
 
-   task reset_pins; begin
-      cs_pin = 1;
+      // Read 0xFF
+      for (i = 0; i < 8; i = i + 1) begin
+         if (i < 7 ) mosi_pin = 0;
+         else mosi_pin = 1;
+         sclk_pin = 0;
+         #100 sclk_pin = 1; #100;
+      end
+
+      // sr lag
       sclk_pin = 0;
-      mosi_pin = 0;
-      #5 clk=1; #5 clk=0; #5 clk=1; #5 clk=0;
+      #100 sclk_pin = 1; #100;
+
+      // Check the output of MISO
+      $display("Reading data at address 0");
+      for (i = 0; i < 10; i = i + 1) begin
+         sclk_pin = 0;
+         #100 sclk_pin = 1; #100;
+         $display("%b", miso_pin);
+      end
+      #100 $finish;
    end
-   endtask
-
-   always @(posedge begintest) begin
-      endtest = 0;
-      dutpassed = 1;
-      #10;
-
-
-      // Add test cases
-
-      // Test Case 1:
-      //
-      reset_pins();
-      cs_pin = 0;
-
-      // Write to register 7'b0011101
-      mosi_pin <= 0;
-      #80 mosi_pin <= 0;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 0;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 0; // Write when 8th bit is low
-
-      // Write 8'b10101010 to the register
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 0;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 0;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 0;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 0;
-
-      #80
-        // Read from register 7'b0011101
-        mosi_pin <= 0;
-      #80 mosi_pin <= 0;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 0;
-      #80 mosi_pin <= 1;
-      #80 mosi_pin <= 1; // Read when 8th bit is high
-
-      // With 50 MHz clock, should take 160 nanoseconds total to read from serial
-
-      #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
-         dutpassed = 0;
-         $display("Test 1 Failed");
-      end
-      #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
-         dutpassed = 0;
-         $display("Test 1 Failed");
-      end
-      #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
-         dutpassed = 0;
-         $display("Test 1 Failed");
-      end
-      #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
-         dutpassed = 0;
-         $display("Test 1 Failed");
-      end
-      #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
-         dutpassed = 0;
-         $display("Test 1 Failed");
-      end
-      #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
-         dutpassed = 0;
-         $display("Test 1 Failed");
-      end
-      #20 if (miso_pin != 1) begin // Cycle through and check the bits from the miso pin
-         dutpassed = 0;
-         $display("Test 1 Failed");
-      end
-      #20 if (miso_pin != 0) begin // Cycle through and check the bits from the miso pin
-         dutpassed = 0;
-         $display("Test 1 Failed");
-      end
-
-      #5
-        endtest = 1;
-   end
-
 endmodule
