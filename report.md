@@ -63,5 +63,6 @@ To write, we enable dm_we for 8 serial clock cycles and then return to the begin
 
 # Challenges
 We had some issues as we forgot that the Sclk(Serial clock) has a delay of 4 clock cyles as it passed through the input conditioner.
+We also forgot that because data is presented on a negative edge, we need to wait a half-sclk cycle after receiving the read-write bit to begin checking the output of miso_pin.
 
 # Work Plan Reflection

@@ -1,13 +1,13 @@
 @startuml
 [*] -> Begin : CS asserted low
-Begin -> LoadAddress
+Begin -> LoadAddress : SCLK Posedge
 LoadAddress -> LoadAddress : Read 7 bits
-LoadAddress --> HandleReadWrite
+LoadAddress --> HandleReadWrite : SCLK Posedge
 HandleReadWrite --> StartRead : Read?
-StartRead -> EndRead
+StartRead -> EndRead : SCLK Posedge
 HandleReadWrite -> Write : Write?
 Write -> Write : Write 8 bits
-EndRead --> Begin
+EndRead --> Begin : SCLK Posedge
 EndRead -> EndRead : Read 8 bits
-Write --> Begin
+Write --> Begin : SCLK Posedge
 @enduml
