@@ -60,11 +60,18 @@ module fsm
            `BEGIN: begin
               addr_we <= 1;
               state <= `LOAD_ADDRESS;
+              dm_we <= 0;
+              sr_we <= 0;
+              miso_buff <= 0;
            end
 
            // Load the first 7 bits of data for the address.
            `LOAD_ADDRESS: begin
               counter <= counter + 1;
+              sr_we <= 0;
+              dm_we <= 0;
+              miso_buff <= 0;
+
               // 6 because counting starts at 0
               if (counter == 6) begin
                  state <= `HANDLE_READ_WRITE;
@@ -76,12 +83,15 @@ module fsm
            // Handle RW
            `HANDLE_READ_WRITE: begin
               // Read when rw high, write when rw low
+              miso_buff <= 0;
               if (rw) begin
                  sr_we <= 1;
+                 dm_we <= 0;
                  state <= `START_READ;
               end
               else begin
                  dm_we <= 1;
+                 sr_we <= 0;
                  state <= `WRITE;
               end
            end
@@ -89,6 +99,7 @@ module fsm
            // Read operation:
            `START_READ: begin
               sr_we <= 0;
+              dm_we <= 0;
               miso_buff <= 1;
               state <= `END_READ;
            end
@@ -97,6 +108,8 @@ module fsm
            `END_READ: begin
               if (counter == 7) begin
                  state <= `BEGIN;
+                 dm_we <= 0;
+                 sr_we <= 0;
                  counter <= 0;
                  miso_buff <= 0;
               end
@@ -109,11 +122,13 @@ module fsm
            `WRITE: begin
               if (counter == 7) begin
                  dm_we <= 0;
+                 sr_we <= 0;
+                 dm_we <= 1;
                  state <= `BEGIN;
                  counter <= 0;
               end
               else
-                 counter <= counter + 1;
+                counter <= counter + 1;
            end
          endcase
       end

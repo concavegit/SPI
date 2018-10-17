@@ -55,7 +55,7 @@ module spitest();
 
       // Check the output of MISO
       $display("Reading data at address 0");
-      for (i = 0; i < 8; i = i + 1) begin
+      for (i = 0; i < 10; i = i + 1) begin
          sclk_pin = 0;
          #100 sclk_pin = 1; #100;
          $display("%b", miso_pin);
