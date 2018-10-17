@@ -60,3 +60,7 @@ To continue the read operation, we enable miso_buff for 8 serial clock cycles (`
 To write, we enable dm_we for 8 serial clock cycles and then return to the beginning state.
 
 # SPI Test Strategy
+
+# Challenges
+
+# Work Plan Reflection
