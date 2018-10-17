@@ -15,16 +15,17 @@ module testfsm();
       .dm_we(dm_we),
       .addr_we(addr_we),
       .sr_we(sr_we)
+//      .stateOut(stateOut)
       );
 
    always #1 sclk = !sclk;
    initial begin
-      $dumpfile("fsm.vcd");
+      $dumpfile("fsmtwo.vcd");
       $dumpvars();
       // Write 8'b11111111 to 7'b0000000.
       #2 cs = 0;
       shift_reg_out_p = 0;
-      #18 shift_reg_out_p = 1;
+      #16 shift_reg_out_p = 1;
       #16 cs = 1;
 
       // Read address 7'b0000000
