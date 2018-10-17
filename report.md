@@ -62,5 +62,6 @@ To write, we enable dm_we for 8 serial clock cycles and then return to the begin
 # SPI Test Strategy
 
 # Challenges
+We had some issues as we forgot that the Sclk(Serial clock) has a delay of 4 clock cyles as it passed through the input conditioner.
 
 # Work Plan Reflection
