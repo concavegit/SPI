@@ -29,14 +29,12 @@
 module fsm
   (
    input      sclk_edge, // Positive edge of the serial clock
-              cs,        // Chip Select
-              rw,        // Bit determining whether a read or write operation is occurring, equivalent to ShiftRegOutP[0]
-
+              cs, // Chip Select
+              rw, // Bit determining whether a read or write operation is occurring, equivalent to ShiftRegOutP[0]
    output reg miso_buff,
-              dm_we,   // Date Memory Write Enable
-              addr_we, // Address Write enable
-              sr_we   // Shift Register Write Enable
-              //stateOut //Testing Variable
+   dm_we, // Date Memory Write Enable
+   addr_we, // Address Write enable
+   sr_we    // Shift Register Write Enable
    );
 
    // Keep track of the amount of bits of data loaded.
@@ -48,7 +46,7 @@ module fsm
    always @(posedge sclk_edge) begin
       // If cs is high, do nothing.
       if (cs) begin
-         state <= `LOAD_ADDRESS;
+         state <= `BEGIN;
          miso_buff <= 0;
          dm_we <= 0;
          addr_we <= 0;
@@ -56,26 +54,17 @@ module fsm
          counter <= 0;
       end
       else begin
-//        stateOut <= state;
          case (state)
 
            // Begin the transaction
            `BEGIN: begin
               addr_we <= 1;
               state <= `LOAD_ADDRESS;
-              dm_we <= 0;
-              sr_we <= 0;
-              miso_buff <= 0;
            end
 
            // Load the first 7 bits of data for the address.
            `LOAD_ADDRESS: begin
-              addr_we <= 1;
               counter <= counter + 1;
-              sr_we <= 0;
-              dm_we <= 0;
-              miso_buff <= 0;
-
               // 6 because counting starts at 0
               if (counter == 6) begin
                  state <= `HANDLE_READ_WRITE;
@@ -87,15 +76,13 @@ module fsm
            // Handle RW
            `HANDLE_READ_WRITE: begin
               // Read when rw high, write when rw low
-              miso_buff <= 0;
               if (rw) begin
                  sr_we <= 1;
-                 dm_we <= 0;
+                 miso_buff <= 1;
                  state <= `START_READ;
               end
               else begin
                  dm_we <= 1;
-                 sr_we <= 0;
                  state <= `WRITE;
               end
            end
@@ -103,8 +90,6 @@ module fsm
            // Read operation:
            `START_READ: begin
               sr_we <= 0;
-              dm_we <= 0;
-              miso_buff <= 1;
               state <= `END_READ;
            end
 
@@ -112,8 +97,6 @@ module fsm
            `END_READ: begin
               if (counter == 7) begin
                  state <= `BEGIN;
-                 dm_we <= 0;
-                 sr_we <= 0;
                  counter <= 0;
                  miso_buff <= 0;
               end
@@ -126,8 +109,6 @@ module fsm
            `WRITE: begin
               if (counter == 7) begin
                  dm_we <= 0;
-                 sr_we <= 0;
-                 dm_we <= 1;
                  state <= `BEGIN;
                  counter <= 0;
               end
