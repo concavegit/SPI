@@ -88,6 +88,7 @@ module fsm
               miso_buff <= 0;
               //sr_we <= 0;
               if (rw) begin
+                 miso_buff <= 1;
                  sr_we <= 1;
                  dm_we <= 0;
                  state <= `START_READ;
@@ -103,7 +104,6 @@ module fsm
            `START_READ: begin
               sr_we <= 0;
               dm_we <= 0;
-              miso_buff <= 1;
               state <= `END_READ;
            end
 
