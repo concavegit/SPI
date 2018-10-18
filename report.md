@@ -60,7 +60,10 @@ To continue the read operation, we enable miso_buff for 8 serial clock cycles (`
 To write, we enable dm_we for 8 serial clock cycles and then return to the beginning state.
 
 # SPI Test Strategy
+Test Case X
+![](res/cs=1.png)
 
+This is a test case where the chip select pin has been set to 1 when the fith bit of address is being inputted. this was to check if the FSM would work correctly and if all the write enables would be set to low and the miso pin is not driven.
 # Challenges
 We had some issues as we forgot that the Sclk(Serial clock) has a delay of 4 clock cyles as it passed through the input conditioner.
 We also forgot that because data is presented on a negative edge, we need to wait a half-sclk cycle after receiving the read-write bit to begin checking the output of miso_pin.
