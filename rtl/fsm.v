@@ -29,14 +29,12 @@
 module fsm
   (
    input      sclk_edge, // Positive edge of the serial clock
-              cs,        // Chip Select
-              rw,        // Bit determining whether a read or write operation is occurring, equivalent to ShiftRegOutP[0]
-
+              cs, // Chip Select
+              rw, // Bit determining whether a read or write operation is occurring, equivalent to ShiftRegOutP[0]
    output reg miso_buff,
-              dm_we,   // Date Memory Write Enable
-              addr_we, // Address Write enable
-              sr_we   // Shift Register Write Enable
-              //stateOut //Testing Variable
+   dm_we, // Date Memory Write Enable
+   addr_we, // Address Write enable
+   sr_we    // Shift Register Write Enable
    );
 
    // Keep track of the amount of bits of data loaded.
@@ -48,7 +46,7 @@ module fsm
    always @(posedge sclk_edge) begin
       // If cs is high, do nothing.
       if (cs) begin
-         state <= `LOAD_ADDRESS;
+         state <= `BEGIN;
          miso_buff <= 0;
          dm_we <= 0;
          addr_we <= 0;
@@ -56,7 +54,6 @@ module fsm
          counter <= 0;
       end
       else begin
-//        stateOut <= state;
          case (state)
 
            // Begin the transaction
@@ -66,11 +63,11 @@ module fsm
               dm_we <= 0;
               sr_we <= 0;
               miso_buff <= 0;
+              counter <= 1;
            end
 
            // Load the first 7 bits of data for the address.
            `LOAD_ADDRESS: begin
-              addr_we <= 1;
               counter <= counter + 1;
               sr_we <= 0;
               dm_we <= 0;
@@ -81,6 +78,7 @@ module fsm
                  state <= `HANDLE_READ_WRITE;
                  counter <= 0;
                  addr_we <= 0;
+                 //sr_we <= 1;
               end
            end
 
@@ -88,6 +86,7 @@ module fsm
            `HANDLE_READ_WRITE: begin
               // Read when rw high, write when rw low
               miso_buff <= 0;
+              //sr_we <= 0;
               if (rw) begin
                  sr_we <= 1;
                  dm_we <= 0;
@@ -95,7 +94,7 @@ module fsm
               end
               else begin
                  dm_we <= 1;
-                 sr_we <= 0;
+                 // sr_we <= 0;
                  state <= `WRITE;
               end
            end
