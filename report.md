@@ -59,9 +59,11 @@ To continue the read operation, we enable miso_buff for 8 serial clock cycles (`
 To write, we enable dm_we for 8 serial clock cycles and then return to the beginning state.
 ![](res/fsm.png)
 
-As a result, we transitioned away from the above finite state machine late in the project in order to employ a machine that had a greater number of states, but in which each state was more clearly defined. In total, this finite state machine, shown below, had twenty-four states, eight of which occurred every time chip select dropped low. These first eight states process the address bits that the shift register receives from the mosi pin and the bit determining whether a read or write operation should take place. After this step, the state machine could proceed down one of two distinct branches, one handling read operation and one handling write operations. In the end, this more verbose finite state machine proved to be clearer and simpler to debug.
+As a result, we transitioned away from the above finite state machine late in the project and tried to employ a machine that had a greater number of states, but in which each state was more clearly defined. In total, this finite state machine, shown below, had twenty-four states, eight of which occurred every time chip select dropped low. These first eight states process the address bits that the shift register receives from the mosi pin and the bit determining whether a read or write operation should take place. After this step, the state machine could proceed down one of two distinct branches, one handling read operation and one handling write operations. In the end, unfortunately, we transitioned back to a slightly altered version of our original finite state machine.
 
 ![](res/state_diagram.jpg)
+
+Our new finite state machine is clocked on the positive edge of our global system clock rather than on the serial clock, as it previously had been. Moreover, we added an additional state, which is simply a buffer and termed the "Wait" state in our code. This state delays when we read the read/write pin to allow us to accurately determine whether or not the master is signaling for a read or write operation to take place. By clocking the finite state machine on the system clock, we are able to change the values of our control signals more frequently and respond more quickly to changes in the environment during any given serial clock cycle.
 
 # SPI Test Strategy
 Test case 1
