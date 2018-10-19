@@ -64,10 +64,15 @@ As a result, we transitioned away from the above finite state machine late in th
 ![](res/state_diagram.jpg)
 
 # SPI Test Strategy
+Test case 1
+
+
+
+This is our premier test case which shows our SPI momery wokring properly we input xxxxxxxx to the address xxxxxxxxxx and read the same address and get the same data xxxxxxxxxx. This is the wave form.
 Test Case X
 ![](res/cs=1.png)
 
-This is a test case where the chip select pin has been set to 1 when the fith bit of address is being inputted. this was to check if the FSM would work correctly and if all the write enables would be set to low and the miso pin is not driven.
+This is a test case where the chip select pin has been set to 1 when the fith bit of address is being inputted. This was to check if the FSM would work correctly and if all the write enables would be set to low and the miso pin is not driven.
 # Challenges
 We had some issues as we forgot that the Sclk(Serial clock) has a delay of 4 clock cycles as it passed through the input conditioner.
 We also forgot that because data is presented on a negative edge, we need to wait a half-sclk cycle after receiving the read-write bit to begin checking the output of miso_pin. Handling so many write enable functions on 5 state high level FSM also proved to be a hard time for us. We also made some mistakes on our part like forgetting we were putting in decimal values in a program that worked in the hexadecimal and getting confused w.r.t that for an hour
