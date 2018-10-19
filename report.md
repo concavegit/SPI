@@ -72,20 +72,17 @@ Test case 1
 
 ![](res/correct.png)
 
-
-
-
 This is our premier test case which shows our SPI momery wokring properly we input 10110001 to the address 1100001 and read the same address and get the same data 1100001. This is the wave form. (note:- miso is being driven when we are writing, we are aware but chose not to do anything as it didn't affect anything and also because its 1:30am and we have been on this for 7 hours)
-
-
-
-
-
 
 Test Case 2
 ![](res/cs=1.png)
 
 This is a test case where the chip select pin has been set to 1 when the fith bit of address is being inputted. This was to check if the FSM would work correctly and if all the write enables would be set to low and the miso pin is not driven.
+
+## Write to all registers
+We also wrote 10110001 to all registers and read to verify all registers contain the correct value.
+Afterwards, we did the same operation (but this time writing 10000010) with cs high to check for tri-state and read to make sure there was no change in datamemory register values.
+
 # Challenges
 We had some issues as we forgot that the Sclk(Serial clock) has a delay of 4 clock cycles as it passed through the input conditioner.
 We also forgot that because data is presented on a negative edge, we need to wait a half-sclk cycle after receiving the read-write bit to begin checking the output of miso_pin. Handling so many write enable functions with a 5 state high level FSM also proved to be a hard time for us. We also made some mistakes on our part like forgetting we were putting in decimal values in a program that worked in the hexadecimal and getting confused w.r.t that for an hour
