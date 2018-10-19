@@ -68,7 +68,16 @@ Test case 1
 
 
 
-This is our premier test case which shows our SPI momery wokring properly we input xxxxxxxx to the address xxxxxxxxxx and read the same address and get the same data xxxxxxxxxx. This is the wave form.
+![](res/correct.png)
+
+
+
+
+This is our premier test case which shows our SPI momery wokring properly we input 10110001 to the address 1100001 and read the same address and get the same data 1100001. This is the wave form.
+
+
+
+
 Test Case X
 ![](res/cs=1.png)
 
