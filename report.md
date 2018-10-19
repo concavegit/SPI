@@ -69,7 +69,8 @@ Test Case X
 
 This is a test case where the chip select pin has been set to 1 when the fith bit of address is being inputted. this was to check if the FSM would work correctly and if all the write enables would be set to low and the miso pin is not driven.
 # Challenges
-We had some issues as we forgot that the Sclk(Serial clock) has a delay of 4 clock cyles as it passed through the input conditioner.
-We also forgot that because data is presented on a negative edge, we need to wait a half-sclk cycle after receiving the read-write bit to begin checking the output of miso_pin.
+We had some issues as we forgot that the Sclk(Serial clock) has a delay of 4 clock cycles as it passed through the input conditioner.
+We also forgot that because data is presented on a negative edge, we need to wait a half-sclk cycle after receiving the read-write bit to begin checking the output of miso_pin. Handling so many write enable functions on 5 state high level FSM also proved to be a hard time for us. We also made some mistakes on our part like forgetting we were putting in decimal values in a program that worked in the hexadecimal and getting confused w.r.t for an hour
 
 # Work Plan Reflection
+The first half of our lab up till the mid term project was well planned and went very smoothly. When we moved on to the SPI implementation, we had a good start with all the modules figured out by monday of the week it was due but we face issues which at that point appeared minor. They looked like timing issues with respect to the mosi pin driven. We clarified a couple of things with Ben and thought we were good to go but the issues still plagued us. We made multiple changes, trying to understand the timings of the different enable pins and writing different FSM structures (one with 5 high level states and another with 23 explicit ones) but we weren't able to figure out what was wrong. As of 11:51 on the day before this due.
