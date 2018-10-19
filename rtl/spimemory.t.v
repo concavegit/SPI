@@ -23,19 +23,17 @@ module spitest();
       $dumpvars();
 
       test_case = 8'b10110001;
-      test_case_addr = 7'b1100001;
       cs_pin = 1;
       mosi_pin = 0;
       sclk_pin = 0;
       #100 sclk_pin = 1;
       #100 cs_pin = 0;#100;
 
-      // Write 8'b11001110 to address 0x00;
+      // Write 8'b11001110 to address 7'b1111111
       for (i = 0; i < 16; i = i + 1) begin
-         if (i < 6) mosi_pin = 1;
-         else if (i == 6) mosi_pin = 0;
-         else if (i == 7) mosi_pin = 0;
-         else mosi_pin = test_case[i - 8];
+         if (i < 7) mosi_pin = 1;
+         else if (i == 7) mosi_pin = 0; // Signal that this is a write operation
+         else mosi_pin = test_case[i - 8]; // Inverts the test case
 
          sclk_pin = 0;
          #100 sclk_pin = 1; #100;
@@ -43,6 +41,8 @@ module spitest();
 
       // Lie dormant for a bit
       cs_pin = 1;
+      #1000;
+
       sclk_pin = 0;
       #100 sclk_pin = 1;
       #100 cs_pin = 0;#100;
@@ -50,27 +50,90 @@ module spitest();
 
       // Read 0xFF
       for (i = 0; i < 8; i = i + 1) begin
-         mosi_pin = 1;
-         if (i == 6) mosi_pin = 0;
-         if (i == 7) mosi_pin = 0;
+         if (i < 7) mosi_pin = 1;
+         if (i == 7) mosi_pin = 1;
          sclk_pin = 0;
          #100 sclk_pin = 1; #100;
       end
 
       // Check the output of MISO
-      $display("Reading data at address 0, should write ");
-      for (i = 0; i < 10; i = i + 1) begin
+      $display("Reading data for test 1, should write 10001101:");
+      for (i = 0; i < 8; i = i + 1) begin
          sclk_pin = 1;
-         if (i > 7) cs_pin = 1;
          #100 sclk_pin = 0; #100;
          $display("%b", miso_pin);
       end
-      #100 $finish;
+      #100;
 
-      if (test_case_result != test_case) $display ("Failed to read %d from %d", test_case, test_case_addr);
 
-      // Get back to
 
-      // Write 010101 to address 0x11001100110
+      // Test Case 2
+      cs_pin = 1;
+      mosi_pin = 0;
+      sclk_pin = 0;
+      #2000 sclk_pin = 1;
+      #100 cs_pin = 0;sclk_pin=0;
+
+      //Master Setting Address
+
+      //Writing to Address
+      // Writes to address 7'b1010101
+      for (i = 0; i < 7; i = i + 1) begin
+          if (i%2 == 0) mosi_pin = 1;
+          else mosi_pin = 0;
+          sclk_pin = 0;
+          #100 sclk_pin = 1; #100;
+      end
+
+      //Read or Write Bit
+      // Set to Write Here
+      sclk_pin = 0;
+      mosi_pin = 0;
+      #100; sclk_pin = 1; #100;
+
+
+      //Writing Data
+      //Writing 8'b10010010
+      for (i = 0; i < 8; i = i + 1) begin
+          if (i%3 == 0) mosi_pin = 1;
+          else mosi_pin = 0;
+          sclk_pin = 0;
+          #100 sclk_pin = 1; #100;
+      end
+
+      // Lie dormant for a bit
+      cs_pin = 1;
+      sclk_pin = 0;
+      #100 sclk_pin = 1;
+      #100 cs_pin = 0;sclk_pin=0;
+
+      //Master Reading Address
+
+      //Read from Address
+      // Reads address 7'b1010101
+      for (i = 0; i < 7; i = i + 1) begin
+          if (i%2 == 0) mosi_pin = 1;
+          else mosi_pin = 0;
+          sclk_pin = 0;
+          #100 sclk_pin = 1; #100;
+      end
+
+      //Read or Write Bit
+      // Set to Read Here
+      sclk_pin = 0;
+      mosi_pin = 1;
+      #100; sclk_pin = 1; #100;
+
+      // Check the output of MISO
+      $display("Reading data for test 2, should write 10010010:");
+      for (i = 0; i < 8; i = i + 1) begin
+         sclk_pin = 1;
+         #100 sclk_pin = 0; #100;
+         $display("%b", miso_pin);
+      end
+      #100;
+
+
+      $finish();
    end
 endmodule
