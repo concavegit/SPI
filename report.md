@@ -73,7 +73,7 @@ Test case 1
 
 
 
-This is our premier test case which shows our SPI momery wokring properly we input 10110001 to the address 1100001 and read the same address and get the same data 1100001. This is the wave form.
+This is our premier test case which shows our SPI momery wokring properly we input 10110001 to the address 1100001 and read the same address and get the same data 1100001. This is the wave form. (note:- miso is being driven when we are writing, we are aware but chose not to do anything as it didn't affect anything and also because its 1:30am and we have been on this for 7 hours)
 
 
 
