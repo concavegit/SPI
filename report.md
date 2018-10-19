@@ -2,7 +2,7 @@
 ### By Daniel Connolly, Kawin Nikomborirak, William Fairman, and Sreekanth Sajjala
 
 ### Input Conditioning
-In bringing an external signal onto an internal clock domain, we needed to utilize a pair of D flip-flops to synchronize the signal with the clock. This effectively brings the signal into phase with the internal domain. Moreover, we implemented a delay between the synchronized output of the second D flip flop and the conditioned output in order to avoid bouncing. As a result, when the second flip flop asserts a 1, the conditioned output only asserts a 1 on the fourth positive edge following this assertion. In other words, it waits for three positive edges of the clock. Finally, though it was not important for the function of the input conditioner, we created positive and negative edge signals that assert of the clock edges whenever the conditioned output changes in order to assist other subcircuits of the overall CPU in functioning properly.
+In bringing an external signal onto an internal clock domain, we needed to utilize a pair of D flip-flops to synchronize the signal with the clock. This effectively brings the signal into phase with the internal domain. Moreover, we implemented a delay between the synchronized output of the second D flip flop and the conditioned output in order to avoid bouncing. As a result, when the second flip flop asserts a 1, the conditioned output only asserts a 1 on the fourth positive edge following this assertion. In other words, it waits for three positive edges of the clock. Finally, though it was not important for the function of the input conditioner, we created positive and negative edge signals that assert the clock edges whenever the conditioned output changes in order to assist other subcircuits of the overall CPU.
 
 #### Gate Schematic
 The following diagram shows the structural layout of our input conditioner. The diagram consists of four main functions: meta-stabilizing, counting/debouncing, resetting, and outputting a signal. The noisy signal is sent through a set of d-flip-flops to lower the probability of a meta-stabilized signal: the # of flip flops can be expanded if the probability of meta-stabilizing is too high. The counter consists of a 2-bit adder with a mux resetting the output if the reset flag is triggered. If the counter value reaches 3, the input conditioner outputs a new conditioned signal and could trigger a posedge or negedge flag.  
@@ -44,7 +44,7 @@ We used the schematic below available in the lab prompt.
 
 ![](res/schema.png)
 
-The finite state machine we used is outlined by the below diagram.
+The finite state machine we used is outlined by the diagram below.
 If CS is high at any point, all enables are low and returned to the initial point.
 
 For the majority of the project, we operated using the following state diagram. This diagram limited the number of states required in our finite state machine, but proved a hassle when it came to debugging.
