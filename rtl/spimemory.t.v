@@ -32,8 +32,7 @@ module spitest();
 
       // Write 8'b11001110 to address 0x00;
       for (i = 0; i < 16; i = i + 1) begin
-         if (i < 6) mosi_pin = 1;
-         else if (i == 6) mosi_pin = 0;
+         if (i < 7) mosi_pin = 1;
          else if (i == 7) mosi_pin = 0;
          else mosi_pin = test_case[i - 8];
 
@@ -51,8 +50,6 @@ module spitest();
       // Read 0xFF
       for (i = 0; i < 8; i = i + 1) begin
          mosi_pin = 1;
-         if (i == 6) mosi_pin = 0;
-         if (i == 7) mosi_pin = 0;
          sclk_pin = 0;
          #100 sclk_pin = 1; #100;
       end

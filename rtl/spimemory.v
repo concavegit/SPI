@@ -79,6 +79,7 @@ module spiMemory
 
    fsm fsm0
      (
+      .clk(clk),
       .sclk_edge(sclk_posedge),
       .cs(cs),
       .rw(shift_reg_parallel_out[0]),
