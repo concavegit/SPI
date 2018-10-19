@@ -11,7 +11,6 @@ module spitest();
    integer    i;
    reg [7:0]        test_case, test_case_result;
    reg [6:0]        test_case_addr;
-   
 
    initial clk=0;
    always #1 clk= ~clk;
@@ -33,10 +32,11 @@ module spitest();
 
       // Write 8'b11001110 to address 0x00;
       for (i = 0; i < 16; i = i + 1) begin
-         if (i < 7) mosi_pin = 0;
-         else if (i == 8) mosi_pin = 0;
+         if (i < 6) mosi_pin = 1;
+         else if (i == 6) mosi_pin = 0;
+         else if (i == 7) mosi_pin = 0;
          else mosi_pin = test_case[i - 8];
-         
+
          sclk_pin = 0;
          #100 sclk_pin = 1; #100;
       end
@@ -50,8 +50,9 @@ module spitest();
 
       // Read 0xFF
       for (i = 0; i < 8; i = i + 1) begin
-         if (i < 7) mosi_pin = 0;
-         else mosi_pin = 1;
+         mosi_pin = 1;
+         if (i == 6) mosi_pin = 0;
+         if (i == 7) mosi_pin = 0;
          sclk_pin = 0;
          #100 sclk_pin = 1; #100;
       end
@@ -68,7 +69,7 @@ module spitest();
 
       if (test_case_result != test_case) $display ("Failed to read %d from %d", test_case, test_case_addr);
 
-      // Get back to 
+      // Get back to
 
       // Write 010101 to address 0x11001100110
    end
