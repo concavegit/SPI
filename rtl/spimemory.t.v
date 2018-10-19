@@ -132,6 +132,7 @@ module spitest();
 
             sclk_pin = 0;
             #100 sclk_pin = 1; #100;
+            if (miso_pin != 1'bz) $display("Failed to tristate");
          end
       end
 
