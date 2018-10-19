@@ -43,7 +43,7 @@ module fsm
    reg [3:0]  counter = 0;
 
    // Keep track of the current state.
-   reg [5:0]  state = 0;
+   reg [6:0]  state = 0;
 
    always @(posedge sclk_edge) begin
       // If cs is high, do nothing.
@@ -59,58 +59,58 @@ module fsm
 //        stateOut <= state;
          case (state)
             0: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 1;
             end
             1: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 2;
             end
             2: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 3;
             end
             3: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 4;
             end
             4: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 5;
             end
             5: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 6;
             end
             6: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
-              addr_we <= 0;
+              addr_we <= 1;
               sr_we <= 0;
               state <= 7;
             end
             7: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
-              addr_we <= 1;
+              addr_we <= 0;
               sr_we <= 1;
               if (rw) state <= 8;
               else state <= 16;
@@ -177,56 +177,56 @@ module fsm
 
 
             16: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 17;
             end
             17: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 18;
             end
             18: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 19;
             end
             19: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 20;
             end
             20: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 21;
             end
             21: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 22;
             end
             22: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 0;
               addr_we <= 0;
               sr_we <= 0;
               state <= 23;
             end
             23: begin
-              miso_buff <= 0;
+              miso_buff <= 1;
               dm_we <= 1;
               addr_we <= 0;
               sr_we <= 0;
@@ -239,7 +239,7 @@ module fsm
            //    state <= `LOAD_ADDRESS;
            //    dm_we <= 0;
            //    sr_we <= 0;
-           //    miso_buff <= 0;
+           //    miso_buff <= 1;
            // end
            //
            // // Load the first 7 bits of data for the address.
@@ -248,7 +248,7 @@ module fsm
            //    counter <= counter + 1;
            //    sr_we <= 0;
            //    dm_we <= 0;
-           //    miso_buff <= 0;
+           //    miso_buff <= 1;
            //
            //    // 6 because counting starts at 0
            //    if (counter == 6) begin
@@ -261,7 +261,7 @@ module fsm
            // // Handle RW
            // `HANDLE_READ_WRITE: begin
            //    // Read when rw high, write when rw low
-           //    miso_buff <= 0;
+           //    miso_buff <= 1;
            //    if (rw) begin
            //       sr_we <= 1;
            //       dm_we <= 0;
@@ -289,7 +289,7 @@ module fsm
            //       dm_we <= 0;
            //       sr_we <= 0;
            //       counter <= 0;
-           //       miso_buff <= 0;
+           //       miso_buff <= 1;
            //    end
            //    else begin
            //       counter <= counter + 1;
