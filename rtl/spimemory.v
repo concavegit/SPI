@@ -79,14 +79,16 @@ module spiMemory
 
    fsm fsm0
      (
-      .sclk_edge(sclk_posedge),
+      .clk(clk),
       .cs(cs),
       .rw(shift_reg_parallel_out[0]),
+      .s_pos(sclk_posedge),
       .miso_buff(miso_buff),
       .dm_we(dm_we),
       .addr_we(addr_we),
       .sr_we(sr_we)
       );
+
 
   wire serial_out_delayed;
 
