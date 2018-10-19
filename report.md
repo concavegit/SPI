@@ -78,7 +78,9 @@ This is our premier test case which shows our SPI momery wokring properly we inp
 
 
 
-Test Case X
+
+
+Test Case 2
 ![](res/cs=1.png)
 
 This is a test case where the chip select pin has been set to 1 when the fith bit of address is being inputted. This was to check if the FSM would work correctly and if all the write enables would be set to low and the miso pin is not driven.
