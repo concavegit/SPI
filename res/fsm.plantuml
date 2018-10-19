@@ -3,10 +3,9 @@
 Begin -> LoadAddress : SCLK Posedge
 LoadAddress -> LoadAddress : Read 7 bits
 LoadAddress --> HandleReadWrite : SCLK Posedge
-HandleReadWrite -> Wait : RW bit received
-Wait --> StartRead : Read?
+HandleReadWrite --> StartRead : Read?
 StartRead -> EndRead : SCLK Posedge
-Wait -> Write : Write?
+HandleReadWrite -> Write : Write?
 Write -> Write : Write 8 bits
 EndRead --> Begin : SCLK Posedge
 EndRead -> EndRead : Read 8 bits
