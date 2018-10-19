@@ -1,7 +1,6 @@
 # Computer Architecture Lab 2: SPI Memory
 ### By Daniel Connolly, Kawin Nikomborirak, William Fairman, and Sreekanth Sajjala
 
-## Midpoint
 ### Input Conditioning
 In bringing an external signal onto an internal clock domain, we needed to utilize a pair of D flip-flops to synchronize the signal with the clock. This effectively brings the signal into phase with the internal domain. Moreover, we implemented a delay between the synchronized output of the second D flip flop and the conditioned output in order to avoid bouncing. As a result, when the second flip flop asserts a 1, the conditioned output only asserts a 1 on the fourth positive edge following this assertion. In other words, it waits for three positive edges of the clock. Finally, though it was not important for the function of the input conditioner, we created positive and negative edge signals that assert of the clock edges whenever the conditioned output changes in order to assist other subcircuits of the overall CPU in functioning properly.
 
@@ -48,7 +47,7 @@ We used the schematic below available in the lab prompt.
 The finite state machine we used is outlined by the below diagram.
 If CS is high at any point, all enables are low and returned to the initial point.
 
-![](res/fsm.png)
+For the majority of the project, we operated using the following state diagram. This diagram limited the number of states required in our finite state machine, but proved a hassle when it came to debugging.
 
 This design shows the steps necessary for the behavior of an SPI memory unit: CS is asserted low, a 7 bit address is loaded, the RW bit is received, and 8 bits of data is either read or written.
 Since there are enables for the data memory write (dm_we), the address write (addr_we), the shiftregister parallel in (sr_we), and the buffer write (miso_buff), it made sense to us to have each state be some combination of these enables.
@@ -58,6 +57,11 @@ Once this happens, the state machine transitions to a state which handles readin
 If the 8th bit is high (read operation), we load the shiftregister with the contents of the datamemory and begin reading by setting sr_we high (the `StartRead` state).
 To continue the read operation, we enable miso_buff for 8 serial clock cycles (`EndRead` state) and then return to the beginning state.
 To write, we enable dm_we for 8 serial clock cycles and then return to the beginning state.
+![](res/fsm.png)
+
+As a result, we transitioned away from the above finite state machine late in the project in order to employ a machine that had a greater number of states, but in which each state was more clearly defined. In total, this finite state machine, shown below, had twenty-four states, eight of which occurred every time chip select dropped low. These first eight states process the address bits that the shift register receives from the mosi pin and the bit determining whether a read or write operation should take place. After this step, the state machine could proceed down one of two distinct branches, one handling read operation and one handling write operations. In the end, this more verbose finite state machine proved to be clearer and simpler to debug.
+
+![](res/state_diagram.jpg)
 
 # SPI Test Strategy
 Test Case X
